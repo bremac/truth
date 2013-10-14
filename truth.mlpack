@@ -1,0 +1,6 @@
+truth/Lexer
+truth/Parser
+truth/Syntax
+truth/Expression
+truth/Evaluate
+truth/Normalize

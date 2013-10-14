@@ -1,2 +1,3 @@
-<*.ml> or <truthtest.*>: package(oUnit)
+<*.ml> or <*test.*>: package(oUnit)
+<truth/*.cmx>: for-pack(Truth)
 true: use_menhir

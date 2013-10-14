@@ -1,31 +1,44 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
-OCB="ocamlbuild -use-ocamlfind"
+eval `opam config env`
+
+OCAMLBUILD='ocamlbuild'
+FLAGS='-use-ocamlfind'
 
 TARGET=main
 TEST_TARGET=test
 
-COVERAGE_FLAGS=()
 COVERAGE_FILE='bisect0001.out'
 COVERAGE_REPORT='coverage.html'
-COVERAGE_TAG_LINE='<**/*.*> and not <**/{lexer,parser}.*>: bisect'
-BROWSER=chromium
+COVERAGE_TAG_LINE='<**/*.*> and not <**/{lexer,parser}.*>: package(bisect), syntax(camlp4o)'
+
+ocb() {
+  $OCAMLBUILD $FLAGS $*
+}
+
+ocb_coverage() {
+  $OCAMLBUILD $FLAGS -tag-line "$COVERAGE_TAG_LINE" $*
+}
+
+browse() {
+  xdg-open $*
+}
 
 rule() {
   case $1 in
-    clean)    $OCB -clean;;
-    native)   $OCB $TARGET.native;;
-    byte)     $OCB $TARGET.byte;;
-    all)      $OCB $TARGET.native $TARGET.byte;;
-    test)     $OCB $TEST_TARGET.byte --;;
-    coverage) $OCB -clean
-              $OCB -tag-line "$COVERAGE_TAG_LINE" $TEST_TARGET.byte --
+    clean)    ocb -clean;;
+    native)   ocb $TARGET.native;;
+    byte)     ocb $TARGET.byte;;
+    all)      ocb $TARGET.native $TARGET.byte;;
+    test)     ocb $TEST_TARGET.byte --;;
+    coverage) ocb -clean
+              ocb_coverage $TEST_TARGET.byte --
               bisect-report $COVERAGE_FILE -html $COVERAGE_REPORT -I ./_build/
               rm $COVERAGE_FILE
-              $OCB -clean
-              $BROWSER $COVERAGE_REPORT/index.html
+              ocb -clean
+              browse $COVERAGE_REPORT/index.html
               ;;
     *)        echo "Unknown action $1";;
   esac;

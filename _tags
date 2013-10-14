@@ -1,0 +1,2 @@
+<*.ml> or <truthtest.*>: package(oUnit)
+true: use_menhir

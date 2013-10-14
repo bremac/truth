@@ -1,16 +1,13 @@
 open Syntax
 
+
 type expression_t =
   | VariableExpr of string
   | NotExpr of expression_t
   | AndExpr of expression_t * expression_t
   | OrExpr of expression_t * expression_t
 
-type expression_type_t =
-  | VariableExprT
-  | NotExprT
-  | AndExprT
-  | OrExprT
+type expression_type_t = VariableExprT | NotExprT | AndExprT | OrExprT
 
 
 let expr_type = function

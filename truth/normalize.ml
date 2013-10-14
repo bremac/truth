@@ -22,6 +22,15 @@ let rec convert_expr_to_nnf_rec negated expr =
 let convert_expr_to_nnf expr =
   convert_expr_to_nnf_rec false expr
 
+let rec is_in_dnf = function
+  | VariableExpr _ -> true
+  | NotExpr (VariableExpr _) -> true
+  | NotExpr _ -> false
+  | AndExpr (OrExpr _, _) -> false
+  | AndExpr (_, OrExpr _) -> false
+  | AndExpr (a_expr, b_expr) -> is_in_dnf a_expr && is_in_dnf b_expr
+  | OrExpr (a_expr, b_expr) -> is_in_dnf a_expr && is_in_dnf b_expr
+
 let rec convert_expr_to_dnf_rec expr =
   let nnf_expr = convert_expr_to_nnf expr in
   match nnf_expr with
